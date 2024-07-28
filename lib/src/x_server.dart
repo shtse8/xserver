@@ -1,6 +1,8 @@
 import 'dart:async';
+import 'dart:io';
 
 import 'package:shelf/shelf.dart';
+import 'package:shelf/shelf_io.dart';
 import 'package:xserver/xserver.dart';
 
 abstract base class XServerBase {
@@ -20,6 +22,29 @@ abstract base class XServerBase {
     return runZoned(
       () => router(request),
       zoneValues: {XServer.requestSymbol: request},
+    );
+  }
+
+  FutureOr<Response> call(Request request) => handle(request);
+
+  Future<HttpServer> start(
+    Object address,
+    int port, {
+    SecurityContext? securityContext,
+    int? backlog,
+    bool shared = false,
+    String? poweredByHeader = 'Dart with package:shelf',
+  }) {
+    var handler =
+        const Pipeline().addMiddleware(logRequests()).addHandler(handle);
+    return serve(
+      handler,
+      address,
+      port,
+      securityContext: securityContext,
+      backlog: backlog,
+      shared: shared,
+      poweredByHeader: poweredByHeader,
     );
   }
 }
