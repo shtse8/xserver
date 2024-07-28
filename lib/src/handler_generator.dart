@@ -42,7 +42,6 @@ class XServerImportsGenerator extends GeneratorForAnnotation<XServer> {
     final annotatedElementPath = buildStep.inputId.path;
     final resolvedBasePath =
         path.url.join(path.url.dirname(annotatedElementPath), basePath);
-    print('resolvedBasePath: $resolvedBasePath');
     final endpointUtil = EndpointUtil(resolvedBasePath);
     final root = await endpointUtil.createEndpointTree(buildStep);
 
