@@ -5,7 +5,7 @@ import 'package:shelf/shelf.dart';
 import 'package:shelf/shelf_io.dart';
 import 'package:xserver/xserver.dart';
 
-abstract base class XServerBase {
+abstract class XServerBase {
   final Router router = Router();
 
   XServerBase() {
