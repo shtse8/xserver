@@ -3,7 +3,6 @@ version: 0.1.0
 description: A Dart-based web server framework.
 repository: https://github.com/shtse8/xserver
 homepage: https://github.com/shtse8/xserver
-publish_to: none
 
 environment:
   sdk: ^3.0.0
