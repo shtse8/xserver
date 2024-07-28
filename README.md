@@ -17,10 +17,7 @@ Add `xserver` as a dependency in your `pubspec.yaml`:
 
 ```yaml
 dependencies:
-  xserver:
-    git:
-      url: https://github.com/shtse8/xserver.git
-      ref: main
+  xserver: ^0.1.0
 ```
 
 Run `pub get` to install the package.
