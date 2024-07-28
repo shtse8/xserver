@@ -39,9 +39,10 @@ class XServerImportsGenerator extends GeneratorForAnnotation<XServer> {
   Future<String> generateForAnnotatedElement(
       Element element, ConstantReader annotation, BuildStep buildStep) async {
     final basePath = annotation.read('basePath').stringValue;
-    final annotatedElementPath = buildStep.inputId.uri.path;
+    final annotatedElementPath = buildStep.inputId.path;
     final resolvedBasePath =
-        path.join(path.dirname(annotatedElementPath), basePath);
+        path.url.join(path.url.dirname(annotatedElementPath), basePath);
+    print('resolvedBasePath: $resolvedBasePath');
     final endpointUtil = EndpointUtil(resolvedBasePath);
     final root = await endpointUtil.createEndpointTree(buildStep);
 

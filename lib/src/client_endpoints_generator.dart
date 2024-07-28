@@ -30,9 +30,9 @@ class ClientEndpointsGenerator extends GeneratorForAnnotation<XServer> {
     }
 
     final basePath = annotation.read('basePath').stringValue;
-    final annotatedElementPath = buildStep.inputId.uri.path;
+    final annotatedElementPath = buildStep.inputId.path;
     final resolvedBasePath =
-        path.join(path.dirname(annotatedElementPath), basePath);
+        path.url.join(path.url.dirname(annotatedElementPath), basePath);
     final endpointUtil = EndpointUtil(resolvedBasePath);
     final root = await endpointUtil.createEndpointTree(buildStep);
     final typeProvider =
