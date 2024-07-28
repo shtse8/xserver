@@ -20,7 +20,7 @@ class XServerGenerator extends GeneratorForAnnotation<XServer> {
 
     final writer = DartFileWriter(buildStep);
 
-    writer.writeln('base class _\$$className extends XServerBase {');
+    writer.writeln('class _\$$className extends XServerBase {');
     writer.writeln('  _\$$className() : super();');
     writer.writeln();
     writer.writeln('  @override');
