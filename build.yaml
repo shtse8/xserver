@@ -1,19 +1,3 @@
-targets:
-  $default:
-    builders:
-      xserver|xserver_builder:
-        enabled: true
-        generate_for:
-          - lib/app_server.dart
-      xserver|xserver_imports_builder:
-        enabled: true
-        generate_for:
-          - lib/app_server.dart
-      xserver|client_endpoints_builder:
-        enabled: true
-        generate_for:
-          - lib/app_server.dart
-
 builders:
   xserver_builder:
     import: "package:xserver/src/handler_generator.dart"
