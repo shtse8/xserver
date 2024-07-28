@@ -1,0 +1,36 @@
+targets:
+  $default:
+    builders:
+      xserver|xserver_builder:
+        enabled: true
+        generate_for:
+          - lib/app_server.dart
+      xserver|xserver_imports_builder:
+        enabled: true
+        generate_for:
+          - lib/app_server.dart
+      xserver|client_endpoints_builder:
+        enabled: true
+        generate_for:
+          - lib/app_server.dart
+
+builders:
+  xserver_builder:
+    import: "package:xserver/src/handler_generator.dart"
+    builder_factories: ["xserverBuilder"]
+    build_extensions: {".dart": [".xserver.g.dart"]}
+    auto_apply: dependents
+    build_to: source
+    applies_builders: ["source_gen|combining_builder"]
+  xserver_imports_builder:
+    import: "package:xserver/src/handler_generator.dart"
+    builder_factories: ["xserverImportsBuilder"]
+    build_extensions: {".dart": [".imports.dart"]}
+    auto_apply: dependents
+    build_to: source
+  client_endpoints_builder:
+    import: "package:xserver/src/client_endpoints_generator.dart"
+    builder_factories: ["clientEndpointsBuilder"]
+    build_extensions: {".dart": [".client.dart"]}
+    auto_apply: dependents
+    build_to: source
