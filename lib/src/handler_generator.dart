@@ -2,6 +2,7 @@ import 'package:analyzer/dart/element/element.dart';
 import 'package:build/build.dart';
 import 'package:source_gen/source_gen.dart';
 import 'package:xserver/src/annotations.dart';
+import 'package:path/path.dart' as path;
 
 import 'endpoint_util.dart';
 
@@ -34,12 +35,15 @@ class XServerGenerator extends GeneratorForAnnotation<XServer> {
 }
 
 class XServerImportsGenerator extends GeneratorForAnnotation<XServer> {
-  final util = EndpointUtil();
-
   @override
   Future<String> generateForAnnotatedElement(
       Element element, ConstantReader annotation, BuildStep buildStep) async {
-    final root = await util.createEndpointTree(buildStep);
+    final basePath = annotation.read('basePath').stringValue;
+    final annotatedElementPath = buildStep.inputId.uri.path;
+    final resolvedBasePath =
+        path.join(path.dirname(annotatedElementPath), basePath);
+    final endpointUtil = EndpointUtil(resolvedBasePath);
+    final root = await endpointUtil.createEndpointTree(buildStep);
 
     final writer = DartFileWriter(buildStep);
 
@@ -48,7 +52,7 @@ class XServerImportsGenerator extends GeneratorForAnnotation<XServer> {
 
     writer.writeParts(
         ['void generatedRegisterHandlers(', routerElement, ' router) {']);
-    util.visit(root, (node) {
+    endpointUtil.visit(root, (node) {
       for (final entry in node.methods.entries) {
         final method = entry.key;
         final methodInfo = entry.value;

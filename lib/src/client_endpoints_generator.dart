@@ -7,12 +7,11 @@ import 'package:build/build.dart';
 import 'package:source_gen/source_gen.dart';
 import 'package:dart_casing/dart_casing.dart';
 import 'package:xserver/src/annotations.dart';
+import 'package:path/path.dart' as path;
 
 import 'endpoint_util.dart';
 
 class ClientEndpointsGenerator extends GeneratorForAnnotation<XServer> {
-  final util = EndpointUtil();
-
   @override
   Future<String> generateForAnnotatedElement(
       Element element, ConstantReader annotation, BuildStep buildStep) async {
@@ -30,7 +29,12 @@ class ClientEndpointsGenerator extends GeneratorForAnnotation<XServer> {
       throw Exception('Failed to resolve ResponseParsers class');
     }
 
-    final root = await util.createEndpointTree(buildStep);
+    final basePath = annotation.read('basePath').stringValue;
+    final annotatedElementPath = buildStep.inputId.uri.path;
+    final resolvedBasePath =
+        path.join(path.dirname(annotatedElementPath), basePath);
+    final endpointUtil = EndpointUtil(resolvedBasePath);
+    final root = await endpointUtil.createEndpointTree(buildStep);
     final typeProvider =
         await buildStep.inputLibrary.then((l) => l.typeProvider);
     await _generateClientClasses(

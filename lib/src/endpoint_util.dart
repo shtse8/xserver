@@ -34,7 +34,10 @@ class MethodInfo {
 }
 
 class EndpointUtil {
-  final String basePath = 'lib/server/handlers';
+  final String basePath;
+
+  EndpointUtil(this.basePath);
+
   Future<EndpointInfo> createEndpointTree(BuildStep buildStep) async {
     final serverFiles =
         await buildStep.findAssets(Glob('$basePath/**.dart')).toList();
@@ -105,7 +108,7 @@ class EndpointUtil {
   }
 
   (String, List<String>) _parseFilePath(String filePath) {
-    String normalizedPath = filePath.replaceAll('\\', '/');
+    String normalizedPath = filePath.replaceAll('\\\\', '/');
     final parts = normalizedPath.split('.');
     String endpointPath = '/${parts[0].replaceAll('index', '')}';
     endpointPath = endpointPath.replaceAll(RegExp(r'//+'), '/');

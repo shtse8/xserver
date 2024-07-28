@@ -1,11 +1,9 @@
 import 'dart:async';
 
 import 'package:shelf/shelf.dart';
-import 'package:shelf_router/shelf_router.dart';
+import 'package:xserver/xserver.dart';
 
 abstract base class XServerBase {
-  static const Symbol _requestSymbol = #_currentRequest;
-
   final Router router = Router();
 
   XServerBase() {
@@ -21,16 +19,7 @@ abstract base class XServerBase {
   Future<Response> handle(Request request) async {
     return runZoned(
       () => router(request),
-      zoneValues: {_requestSymbol: request},
+      zoneValues: {XServer.requestSymbol: request},
     );
-  }
-
-  static Request get currentRequest {
-    final request = Zone.current[_requestSymbol] as Request?;
-    if (request == null) {
-      throw StateError('No request found in current Zone. '
-          'Ensure this is called within a request handler.');
-    }
-    return request;
   }
 }
