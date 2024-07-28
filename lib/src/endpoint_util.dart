@@ -87,7 +87,7 @@ class EndpointUtil {
         final type = element.type;
         if (type is InterfaceType && type.typeArguments.isNotEmpty) {
           final returnType = type.typeArguments.first;
-          final relativePath = path.relative(asset.path, from: basePath);
+          final relativePath = path.url.relative(asset.path, from: basePath);
           final (endpointPath, methods) = _parseFilePath(relativePath);
           final name = _getEndpointName(endpointPath);
           final info = EndpointInfo(name, endpointPath);
