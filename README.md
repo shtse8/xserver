@@ -17,7 +17,7 @@ Add `xserver` as a dependency in your `pubspec.yaml`:
 
 ```yaml
 dependencies:
-  xserver: ^0.1.0
+  xserver: ^0.1.3
 ```
 
 Run `pub get` to install the package.
@@ -31,7 +31,7 @@ Run `pub get` to install the package.
    ```dart
    import 'package:xserver/xserver.dart';
 
-   @XServer('./server')
+   @XServer('server')
    final class AppServer extends _$AppServer {
    }
    ```
@@ -59,55 +59,65 @@ Run `pub get` to install the package.
    ```dart
    import 'package:xserver/xserver.dart';
 
-   final export = defineHandler((request) {
-     return 'Hello, world!';
-   });
+   part 'hello.g.dart';
+ 
+   @all
+   String hello(Request req) {
+     return 'Hello';
+   }
    ```
 
-   **`./server/get.get.dart`**:
+   **`./server/multiple.dart`**:
    ```dart
    import 'package:xserver/xserver.dart';
 
-   final export = defineHandler((request) {
-     return 'GET Hello!';
-   });
-   ```
-
-   **`./server/get.post.dart`**:
-   ```dart
-   import 'package:xserver/xserver.dart';
-
-   final export = defineHandler((request) {
-     return 'POST Hello!';
-   });
+   part 'multiple.g.dart';
+ 
+   @get
+   String get_(Request req) {
+     return 'get';
+   }
+   
+   @post
+   String post_(Request req) {
+     return 'post';
+   }
    ```
 
    **`./server/nested/hello.dart`**:
    ```dart
    import 'package:xserver/xserver.dart';
 
-   final export = defineHandler((request) {
-     return 'Nested Hello!';
-   });
+   part 'hello.g.dart';
+ 
+   @all
+   String hello(Request req) {
+     return 'Nested Hello';
+   }
    ```
 
    **`./server/[id].dart`**:
    ```dart
    import 'package:xserver/xserver.dart';
 
-   final export = defineHandler((request) {
-     final id = request.params['id'];
+   part 'id.g.dart'; 
+
+   @all
+   String id(Request req) {
+     final id = req.params['id'];
      return 'Hello, $id!';
-   });
+   }
    ```
 
    **`./server/nested/index.dart`**:
    ```dart
    import 'package:xserver/xserver.dart';
-
-   final export = defineHandler((request) {
-     return 'Nested Index!';
-   });
+   
+   part 'index.g.dart';  
+   @all
+   String index(Request req) {
+     return 'Nested Index';
+   }
    ```
 
 4. **Generate Handlers**:
