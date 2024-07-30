@@ -61,7 +61,7 @@ class XServerImportsGenerator extends GeneratorForAnnotation<XServer> {
         writer.writeParts([
           "  router.${method.toLowerCase()}('${node.path}', ",
           methodInfo.handler,
-          ".handler);\n"
+          "Handler);\n"
         ]);
       }
     });

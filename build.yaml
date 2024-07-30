@@ -1,4 +1,11 @@
 builders:
+  handler_builder:
+    import: "package:xserver/src/handler_builder.dart"
+    builder_factories: ["handlerBuilder"]
+    build_extensions: {".dart": [".handler.g.dart"]}
+    auto_apply: dependents
+    build_to: cache
+    applies_builders: ["source_gen|combining_builder"]
   xserver_builder:
     import: "package:xserver/src/handler_generator.dart"
     builder_factories: ["xserverBuilder"]

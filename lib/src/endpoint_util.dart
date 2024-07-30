@@ -4,6 +4,8 @@ import 'package:analyzer/dart/element/type_provider.dart';
 import 'package:build/build.dart';
 import 'package:glob/glob.dart';
 import 'package:path/path.dart' as path;
+import 'package:source_gen/source_gen.dart';
+import 'package:xserver/src/annotations.dart';
 
 class EndpointInfo {
   String name;
@@ -79,23 +81,38 @@ class EndpointUtil {
     return EndpointInfo(name, path);
   }
 
+  DartType _getReturnType(FunctionTypedElement element) {
+    final type = element.returnType;
+    if (type is InterfaceType && type.isDartAsyncFuture) {
+      return type.typeArguments.first;
+    }
+    return type;
+  }
+
   Future<EndpointInfo?> _extractEndpointInfo(
       AssetId asset, BuildStep buildStep) async {
     final library = await buildStep.resolver.libraryFor(asset);
     for (final element in library.topLevelElements) {
-      if (element is TopLevelVariableElement && element.name == 'export') {
-        final type = element.type;
-        if (type is InterfaceType && type.typeArguments.isNotEmpty) {
-          final returnType = type.typeArguments.first;
-          final relativePath = path.url.relative(asset.path, from: basePath);
-          final (endpointPath, methods) = _parseFilePath(relativePath);
-          final name = _getEndpointName(endpointPath);
-          final info = EndpointInfo(name, endpointPath);
-          for (final method in methods) {
-            info.addMethod(method, returnType, element);
-          }
-          return info;
+      if (element is FunctionTypedElement &&
+          TypeChecker.fromRuntime(Handler).hasAnnotationOf(element)) {
+        final returnType = _getReturnType(element);
+        final relativePath = path.url.relative(asset.path, from: basePath);
+        final (endpointPath, _) = _parseFilePath(relativePath);
+        final name = _getEndpointName(endpointPath);
+        final info = EndpointInfo(name, endpointPath);
+        final methods = [
+          if (TypeChecker.fromRuntime(Get).hasAnnotationOf(element) ||
+              TypeChecker.fromRuntime(All).hasAnnotationOf(element))
+            'get',
+          if (TypeChecker.fromRuntime(Post).hasAnnotationOf(element) ||
+              TypeChecker.fromRuntime(All).hasAnnotationOf(element))
+            'post',
+        ];
+
+        for (final method in methods) {
+          info.addMethod(method, returnType, element);
         }
+        return info;
       }
     }
     return null;

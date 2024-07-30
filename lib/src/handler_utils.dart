@@ -13,7 +13,7 @@ HandlerFunction<T> _getResponse<T>(
   return (Request request) async {
     try {
       final result = await handler(request);
-      return _processResult(result);
+      return handleResult(result);
     } catch (e, stackTrace) {
       print('Error in handler: $e');
       print('Stack trace: $stackTrace');
@@ -28,7 +28,7 @@ HandlerFunction<T> _getResponse<T>(
   };
 }
 
-Response _processResult<T>(T result) => switch (result) {
+Response handleResult<T>(T result) => switch (result) {
       Response() => result,
       String() => Response.ok(result),
       Stream<Map<String, dynamic>>() => _handleSSE(result.map(json.encode)),

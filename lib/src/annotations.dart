@@ -5,6 +5,7 @@ export 'package:shelf_router/shelf_router.dart';
 
 // Re-export XServer base class
 export 'x_server.dart';
+export 'handler_utils.dart' show handleResult;
 
 /// Annotation for XServer classes
 class XServer {
@@ -26,3 +27,23 @@ class XServer {
 
 // You might want to include some commonly used types here for convenience
 typedef HandlerFunction<T> = FutureOr<Response> Function(Request request);
+
+class Handler {
+  const Handler();
+}
+
+class Get extends Handler {
+  const Get();
+}
+
+class Post extends Handler {
+  const Post();
+}
+
+class All extends Handler {
+  const All();
+}
+
+const all = All();
+const get = Get();
+const post = Post();
