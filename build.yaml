@@ -4,7 +4,7 @@ builders:
     builder_factories: ["xserverBuilder"]
     build_extensions: {".dart": [".xserver.g.dart"]}
     auto_apply: dependents
-    build_to: source
+    build_to: cache
     applies_builders: ["source_gen|combining_builder"]
   xserver_imports_builder:
     import: "package:xserver/src/handler_generator.dart"
