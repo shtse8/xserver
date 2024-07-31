@@ -6,6 +6,7 @@ export 'package:shelf_router/shelf_router.dart';
 // Re-export XServer base class
 export 'x_server.dart';
 export 'handler_utils.dart' show handleResult;
+export 'x_server_parser.dart';
 
 /// Annotation for XServer classes
 class XServer {
@@ -47,3 +48,21 @@ class All extends Handler {
 const all = All();
 const get = Get();
 const post = Post();
+
+class Header {
+  final String? name;
+  const Header([this.name]);
+}
+
+class Query {
+  final String? name;
+  const Query([this.name]);
+}
+
+class Body {
+  const Body();
+}
+
+const query = Query();
+const header = Header();
+const body = Body();
