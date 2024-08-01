@@ -17,6 +17,14 @@ class XServerResponseHandler {
         _ => _handleJsonEncodable(result),
       };
 
+  static Response handleStreamResult<T>(Stream<T> stream) => switch (stream) {
+        Stream<Map<String, dynamic>> mapStream =>
+          _handleSSE(mapStream.map(json.encode)),
+        Stream<String> stringStream => _handleSSE(stringStream),
+        Stream<List<int>> binaryStream => _handleBinaryStream(binaryStream),
+        _ => throw UnsupportedError('Stream type not supported: $stream'),
+      };
+
   static Response _handleBinaryStream(Stream<List<int>> stream) {
     return Response.ok(
       stream,

@@ -226,17 +226,34 @@ class XServerGenerator extends GeneratorForAnnotation<XServer> {
     buffer.writeln('$returnType $methodName(Request request) async {');
 
     // Generate parameter injection code
+    final injectedParameters = <String>[];
     for (var param in handler.parameters) {
-      buffer.writeln(_generateParameterInjectionCode(param));
+      final injectionCode = _generateParameterInjectionCode(param);
+      buffer.writeln(injectionCode);
+      injectedParameters.add(param.name);
     }
 
+    // Determine if we need to use 'this.'
+    final potentialConflicts = [...injectedParameters, 'result'];
+    final needsThis = potentialConflicts.contains(handler.name);
+    final methodCallPrefix = needsThis ? 'this.' : '';
+
     // Call the original method
-    buffer.write('final result = await ${handler.name}(');
+    if (handler.returnType.isDartAsyncStream) {
+      buffer.writeln('final result = $methodCallPrefix${handler.name}(');
+    } else {
+      buffer.writeln('final result = await $methodCallPrefix${handler.name}(');
+    }
     buffer.write(_generateMethodCallParameters(handler.parameters));
     buffer.writeln(');');
 
     // Handle the result using XServerResponseHandler
-    buffer.writeln('return XServerResponseHandler.handleResult(result);');
+    if (handler.returnType.isDartAsyncStream) {
+      buffer
+          .writeln('return XServerResponseHandler.handleStreamResult(result);');
+    } else {
+      buffer.writeln('return XServerResponseHandler.handleResult(result);');
+    }
 
     buffer.writeln('}');
 
@@ -273,7 +290,7 @@ class XServerGenerator extends GeneratorForAnnotation<XServer> {
       buffer.write('}');
     }
 
-    buffer.writeln(') async {');
+    buffer.writeln(') {');
 
     // Generate request
     buffer.writeln("    final Map<String, dynamic> pathParams = {");
