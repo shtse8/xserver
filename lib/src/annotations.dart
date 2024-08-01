@@ -72,10 +72,11 @@ class Header {
 
 @Target({TargetKind.parameter})
 class Path {
-  final String name;
-  const Path(this.name);
+  final String? name;
+  const Path([this.name]);
 }
 
 const query = Query();
 const header = Header();
 const body = Body();
+const path = Path();
