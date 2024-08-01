@@ -93,8 +93,8 @@ abstract class XServerClientBase {
   Stream<T> eventSourceRequest<T>(
     String method,
     String path, {
-    Map<String, dynamic>? pathParams,
-    Map<String, dynamic>? queryParams,
+    Map<String, String>? pathParams,
+    Map<String, String>? queryParams,
     dynamic body,
     Map<String, String>? headers,
     required T Function(String) parseResponse,

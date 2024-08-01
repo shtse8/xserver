@@ -293,26 +293,29 @@ class XServerGenerator extends GeneratorForAnnotation<XServer> {
     buffer.writeln(') {');
 
     // Generate request
-    buffer.writeln("    final Map<String, dynamic> pathParams = {");
+    buffer.writeln('    final Map<String, String> pathParams = {');
     for (var param
         in handler.parameters.where((p) => _pathChecker.hasAnnotationOf(p))) {
-      buffer.writeln("      '${param.name}': ${param.name},");
+      buffer.writeln(
+          "      '${param.name}': ${_generateSerializationCode(param)},");
     }
-    buffer.writeln("    };");
+    buffer.writeln('    };');
 
-    buffer.writeln("    final Map<String, dynamic> queryParams = {");
+    buffer.writeln('    final Map<String, String> queryParams = {');
     for (var param
         in handler.parameters.where((p) => _queryChecker.hasAnnotationOf(p))) {
-      buffer.writeln("      '${param.name}': ${param.name},");
+      buffer.writeln(
+          "      '${param.name}': ${_generateSerializationCode(param)},");
     }
-    buffer.writeln("    };");
+    buffer.writeln('    };');
 
-    buffer.writeln("    final Map<String, String> headers = {");
+    buffer.writeln('    final Map<String, String> headers = {');
     for (var param
         in handler.parameters.where((p) => _headerChecker.hasAnnotationOf(p))) {
-      buffer.writeln("      '${param.name}': ${param.name}.toString(),");
+      buffer.writeln(
+          "      '${param.name}': ${_generateSerializationCode(param)},");
     }
-    buffer.writeln("    };");
+    buffer.writeln('    };');
 
     final bodyParam = handler.parameters
         .firstWhereOrNull((p) => _bodyChecker.hasAnnotationOf(p));
@@ -339,6 +342,24 @@ class XServerGenerator extends GeneratorForAnnotation<XServer> {
     buffer.writeln("  }");
 
     return buffer.toString();
+  }
+
+  String _generateSerializationCode(ParameterElement param) {
+    final type = param.type;
+    if (type.isDartCoreBool || type.isDartCoreNum || type.isDartCoreString) {
+      return '${param.name}.toString()';
+    } else if (_hasToJsonMethod(type)) {
+      return '${param.name}.toJson()';
+    } else {
+      return 'jsonEncode(${param.name})';
+    }
+  }
+
+  bool _hasToJsonMethod(DartType type) {
+    if (type is InterfaceType) {
+      return type.getMethod('toJson') != null;
+    }
+    return false;
   }
 
   String _generateParseResponse(DartType returnType) {
@@ -403,8 +424,19 @@ class XServerGenerator extends GeneratorForAnnotation<XServer> {
       return "final ${param.name} = request;";
     }
 
+    final fromJsonArg =
+        _hasFromJsonConstructor(param.type) ? ', ${param.type}.fromJson' : '';
+
     return "final ${param.name} = XServerParser.parseParameter<${param.type}>("
-        "$sourceCode, '${param.name}', ${!param.isRequired}, '$sourceType');";
+        "$sourceCode, '${param.name}', ${!param.isRequired}, '$sourceType'$fromJsonArg);";
+  }
+
+  bool _hasFromJsonConstructor(DartType type) {
+    if (type is InterfaceType) {
+      return type.element.constructors
+          .any((c) => c.name == 'fromJson' && c.parameters.length == 1);
+    }
+    return false;
   }
 
   String _generateMethodCallParameters(List<ParameterElement> parameters) {
@@ -417,14 +449,6 @@ class XServerGenerator extends GeneratorForAnnotation<XServer> {
 
   bool _isRequestParameter(ParameterElement param) {
     return _requestChecker.isExactlyType(param.type);
-  }
-
-  bool _hasFromJsonConstructor(DartType type) {
-    if (type is InterfaceType) {
-      return type.element.constructors
-          .any((c) => c.name == 'fromJson' && c.parameters.length == 1);
-    }
-    return false;
   }
 
   DartObject? _getHandlerAnnotation(MethodElement method) {
