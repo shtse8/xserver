@@ -9,11 +9,7 @@ class XServerParser {
       throw BadRequestException(
           'Required $sourceType parameter "$paramName" is missing');
     }
-    return _parseValue<T>(value, paramName, fromJson);
-  }
 
-  static T _parseValue<T>(dynamic value, String paramName,
-      [T Function(Map<String, dynamic>)? fromJson]) {
     try {
       if (T == String) {
         return value.toString() as T;

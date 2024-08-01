@@ -1,27 +1,8 @@
 builders:
-  handler_builder:
-    import: "package:xserver/src/handler_builder.dart"
-    builder_factories: ["handlerBuilder"]
-    build_extensions: {".dart": [".handler.g.dart"]}
-    auto_apply: dependents
-    build_to: cache
-    applies_builders: ["source_gen|combining_builder"]
-  xserver_builder:
-    import: "package:xserver/src/handler_generator.dart"
-    builder_factories: ["xserverBuilder"]
+  x_server_builder:
+    import: "package:xserver/src/x_server_builder.dart"
+    builder_factories: ["xServerBuilder"]
     build_extensions: {".dart": [".xserver.g.dart"]}
     auto_apply: dependents
     build_to: cache
     applies_builders: ["source_gen|combining_builder"]
-  xserver_imports_builder:
-    import: "package:xserver/src/handler_generator.dart"
-    builder_factories: ["xserverImportsBuilder"]
-    build_extensions: {".dart": [".imports.dart"]}
-    auto_apply: dependents
-    build_to: source
-  client_endpoints_builder:
-    import: "package:xserver/src/client_endpoints_generator.dart"
-    builder_factories: ["clientEndpointsBuilder"]
-    build_extensions: {".dart": [".client.dart"]}
-    auto_apply: dependents
-    build_to: source
