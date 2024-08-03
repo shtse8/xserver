@@ -1,15 +1,12 @@
 import 'dart:async';
+import 'package:xserver/src/x_server_context.dart';
 import 'package:xserver/xserver.dart';
 
 abstract class XServerBase {
   Router get router;
 
-  Future<Response> handle(Request request) async {
-    return runZoned(
-      () => router(request),
-      zoneValues: {XServer.requestSymbol: request},
-    );
-  }
-
-  FutureOr<Response> call(Request request) => handle(request);
+  FutureOr<Response> call(Request request) => XServerContext.createZone(
+        request,
+        router,
+      );
 }

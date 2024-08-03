@@ -10,7 +10,7 @@ class DevClient extends BaseClient {
   @override
   Future<http.StreamedResponse> send(http.BaseRequest request) async {
     final shelfRequest = _convertToShelfRequest(request);
-    final shelfResponse = await _server.handle(shelfRequest);
+    final shelfResponse = await _server(shelfRequest);
     return _convertToHttpResponse(shelfResponse);
   }
 
