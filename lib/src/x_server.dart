@@ -16,25 +16,4 @@ abstract class XServerBase {
   }
 
   FutureOr<Response> call(Request request) => handle(request);
-
-  Future<HttpServer> start(
-    Object address,
-    int port, {
-    SecurityContext? securityContext,
-    int? backlog,
-    bool shared = false,
-    String? poweredByHeader = 'Dart with package:shelf',
-  }) {
-    var handler =
-        const Pipeline().addMiddleware(logRequests()).addHandler(handle);
-    return serve(
-      handler,
-      address,
-      port,
-      securityContext: securityContext,
-      backlog: backlog,
-      shared: shared,
-      poweredByHeader: poweredByHeader,
-    );
-  }
 }
