@@ -8,18 +8,27 @@ class DevClient extends BaseClient {
   DevClient(this._server);
 
   @override
-  Future<StreamedResponse> send(BaseRequest request) async {
-    final shelfRequest = shelf.Request(
+  Future<http.StreamedResponse> send(http.BaseRequest request) async {
+    final shelfRequest = _convertToShelfRequest(request);
+    final shelfResponse = await _server.handle(shelfRequest);
+    return _convertToHttpResponse(shelfResponse);
+  }
+
+  shelf.Request _convertToShelfRequest(http.BaseRequest request) {
+    return shelf.Request(
       request.method,
       request.url,
       headers: request.headers,
       body: request.finalize(),
     );
-    final response = await _server.handle(shelfRequest);
+  }
+
+  http.StreamedResponse _convertToHttpResponse(shelf.Response response) {
     return http.StreamedResponse(
       response.read(),
       response.statusCode,
       headers: response.headers,
+      contentLength: response.contentLength,
     );
   }
 }
