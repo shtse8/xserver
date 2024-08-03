@@ -205,7 +205,7 @@ class XServerGenerator extends GeneratorForAnnotation<XServer> {
     buffer.writeln(
         'class ${className}Client extends XServerClientBase implements I$className {');
     buffer.writeln(
-        '  ${className}Client(super.baseUrl, {super.defaultHeaders = const {}, this.allMethod = \'POST\'});');
+        '  ${className}Client(super._baseUrl, {super.client, super.headers, this.allMethod = \'POST\'});');
     buffer.writeln('  final String allMethod;');
     buffer.writeln();
 

@@ -12,6 +12,7 @@ export 'x_server_parser.dart';
 export 'x_server_response_handler.dart';
 export 'x_server_client_base.dart';
 export 'composables.dart';
+export 'dev_client.dart';
 
 /// Annotation for XServer classes
 @Target({TargetKind.classType})
