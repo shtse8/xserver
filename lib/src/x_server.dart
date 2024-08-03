@@ -6,17 +6,7 @@ import 'package:shelf/shelf_io.dart';
 import 'package:xserver/xserver.dart';
 
 abstract class XServerBase {
-  final Router router = Router();
-
-  XServerBase() {
-    _setupRoutes();
-  }
-
-  void registerHandlers(Router router);
-
-  void _setupRoutes() {
-    registerHandlers(router);
-  }
+  Router get router;
 
   Future<Response> handle(Request request) async {
     return runZoned(

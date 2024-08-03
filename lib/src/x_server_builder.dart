@@ -184,12 +184,13 @@ class XServerGenerator extends GeneratorForAnnotation<XServer> {
 
     // Generate registerHandlers method
     buffer.writeln('@override');
-    buffer.writeln('void registerHandlers(Router router) {');
+    buffer.writeln('@pragma(\'vm:prefer-inline\')');
+    buffer.writeln('Router get router => Router()');
     for (var handler in handlers) {
       buffer.writeln(
-          "router.${handler.method.toLowerCase()}('${handler.path}', _${handler.name}Handler);");
+          "..${handler.method.toLowerCase()}('${handler.path}', _${handler.name}Handler)");
     }
-    buffer.writeln('}');
+    buffer.writeln(';');
 
     // Generate handler wrapper methods
     for (var handler in handlers) {
