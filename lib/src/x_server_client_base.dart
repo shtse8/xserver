@@ -27,9 +27,9 @@ abstract class XServerClientBase {
   final String _baseUrl;
 
   XServerClientBase(this._baseUrl,
-      {Client? client, Map<String, String>? headers})
+      {Client? client, Map<String, String> headers = const {}})
       : _client = client ?? Client(),
-        _headers = headers ?? {};
+        _headers = headers;
 
   Future<StreamedResponse> _sendRequest(
     String method,
