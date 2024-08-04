@@ -5,8 +5,6 @@ import 'package:build/build.dart';
 import 'package:collection/collection.dart';
 import 'package:source_gen/source_gen.dart';
 import 'package:xserver/xserver.dart';
-import 'package:xserver/src/x_server_response_handler.dart';
-import 'package:shelf/shelf.dart' show Request;
 
 class XServerGenerator extends GeneratorForAnnotation<XServer> {
   static const TypeChecker _requestChecker = TypeChecker.fromRuntime(Request);
@@ -89,8 +87,9 @@ class XServerGenerator extends GeneratorForAnnotation<XServer> {
       sb.write(']');
     }
     if (namedParams.isNotEmpty) {
-      if (positionalParams.isNotEmpty || optionalPositionalParams.isNotEmpty)
+      if (positionalParams.isNotEmpty || optionalPositionalParams.isNotEmpty) {
         sb.write(', ');
+      }
       sb.write('{');
       sb.writeAll(namedParams, ', ');
       sb.write('}');
