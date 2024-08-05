@@ -49,8 +49,7 @@ class XServerGenerator extends GeneratorForAnnotation<XServer> {
   }
 
   String _generateInterfaceMethod(HandlerInfo handler) {
-    final returnType =
-        handler.returnType.getDisplayString(withNullability: true);
+    final returnType = handler.returnType.getDisplayString();
     final params = _generateMethodParameters(handler.parameters,
         excludeRequestParam: true);
     return '$returnType ${handler.name}$params;';
@@ -65,7 +64,7 @@ class XServerGenerator extends GeneratorForAnnotation<XServer> {
     for (var param in parameters) {
       if (excludeRequestParam && _isRequestParameter(param)) continue;
 
-      final paramType = param.type.getDisplayString(withNullability: true);
+      final paramType = param.type.getDisplayString();
       final paramString = '$paramType ${param.name}';
 
       if (param.isNamed) {
@@ -133,7 +132,7 @@ class XServerGenerator extends GeneratorForAnnotation<XServer> {
     final innerType = _getInnerType(returnType);
     if (!_isSerializable(innerType)) {
       throw InvalidGenerationSourceError(
-        'Return type ${innerType.getDisplayString(withNullability: false)} must be serializable. '
+        'Return type ${innerType.getDisplayString()} must be serializable. '
         'Ensure it has a `toJson` method and a `fromJson` constructor.',
         element: method,
       );
@@ -342,8 +341,7 @@ class XServerGenerator extends GeneratorForAnnotation<XServer> {
 
   String _generateClientMethod(HandlerInfo handler) {
     final buffer = StringBuffer();
-    final returnType =
-        handler.returnType.getDisplayString(withNullability: true);
+    final returnType = handler.returnType.getDisplayString();
     final methodName = handler.name;
 
     buffer.writeln('  @override');
@@ -356,7 +354,7 @@ class XServerGenerator extends GeneratorForAnnotation<XServer> {
 
     // Generate method parameters
     final params = handler.parameters.map((p) {
-      final paramType = p.type.getDisplayString(withNullability: true);
+      final paramType = p.type.getDisplayString();
       if (p.isNamed) {
         return '${p.isRequired ? 'required ' : ''}$paramType ${p.name}';
       } else {
@@ -454,7 +452,7 @@ class XServerGenerator extends GeneratorForAnnotation<XServer> {
     } else if (innerType.isDartCoreBool) {
       return 'responseBody.toLowerCase() == \'true\'';
     } else {
-      return '${innerType.getDisplayString(withNullability: false)}.fromJson(jsonDecode(responseBody))';
+      return '${innerType.getDisplayString()}.fromJson(jsonDecode(responseBody))';
     }
   }
 
