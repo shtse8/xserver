@@ -1,5 +1,49 @@
 # Changelog
 
+## [0.2.0] - 2024-08-05
+
+### New Features
+- Introduced a new design for path handling and validation in the XServerGenerator.
+- Added support for nested optional path segments (e.g., `/user[/<id>[/<name>]]`).
+
+### Improvements
+- Enhanced path parameter validation to correctly handle required and optional parameters.
+- Improved handling of nullable (`String?`) path parameters, treating them as optional.
+
+### Changes
+- Modified the `_validatePath` method to focus on validating required parameters in the required part of the path.
+- Introduced `_extractRequiredPath` method to handle complex nested optional path structures.
+
+### Fixes
+- Resolved issues with false positives in path validation for nested optional segments.
+- Fixed incorrect handling of nullable parameters in path validation.
+
+### Developer Experience
+- Simplified the process of defining complex routes with optional parameters.
+- Improved error messages for invalid path definitions, providing more context for easier debugging.
+
+### Performance
+- Optimized path validation process, reducing unnecessary checks on optional parameters.
+
+### Documentation
+- Updated README with examples of new path definition capabilities.
+- Added more comprehensive documentation for path parameter usage and best practices.
+
+## How to Upgrade
+To upgrade to this version, update your `pubspec.yaml`:
+
+```yaml
+dependencies:
+  xserver: ^0.2.0
+```
+
+Then run:
+```
+dart pub get
+```
+
+Ensure to review your existing route definitions, particularly those with optional parameters, as the new validation logic may catch previously undetected issues.
+
 ## [0.1.3] - 2024-07-31
 
 ### Added
