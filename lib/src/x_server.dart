@@ -7,6 +7,6 @@ abstract class XServerBase {
 
   FutureOr<Response> call(Request request) => XServerContext.createZone(
         request,
-        router,
+        router.call,
       );
 }
