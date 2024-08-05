@@ -170,27 +170,26 @@ class XServerGenerator extends GeneratorForAnnotation<XServer> {
         .where((p) => _pathChecker.hasAnnotationOf(p))
         .toList();
 
-    // First pass: Check required parameters (assume no optional segments)
-    final requiredPath = definedPath.replaceAll(RegExp(r'\[.*?\]'), '');
+    final requiredPath = _extractRequiredPath(definedPath);
+
     for (var param in pathParams.where((p) => p.isRequired)) {
       if (!_isParameterInPath(requiredPath, param)) {
         throw InvalidGenerationSourceError(
-          'Required path parameter "${param.name}" is not included in the non-optional part of the path "$definedPath".',
+          'Required path parameter "${param.name}" is not included in the required part of the path "$definedPath".',
           element: method,
         );
       }
     }
 
-    // Second pass: Check all parameters (assume all optional segments present)
-    final fullPath = definedPath.replaceAll(RegExp(r'[\[\]]'), '');
-    for (var param in pathParams) {
-      if (!_isParameterInPath(fullPath, param)) {
-        throw InvalidGenerationSourceError(
-          'Path parameter "${param.name}" is not included in the path "$definedPath".',
-          element: method,
-        );
-      }
+    // No need to check optional parameters
+  }
+
+  String _extractRequiredPath(String path) {
+    var result = path;
+    while (result.contains('[') && result.contains(']')) {
+      result = result.replaceAll(RegExp(r'\[([^\[\]]*)\]'), '');
     }
+    return result;
   }
 
   bool _isParameterInPath(String path, ParameterElement param) {
