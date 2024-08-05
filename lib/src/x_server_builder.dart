@@ -106,8 +106,15 @@ class XServerGenerator extends GeneratorForAnnotation<XServer> {
       if (handlerAnnotation != null) {
         _validateHandlerMethod(method);
         final httpMethod = _getHttpMethod(handlerAnnotation);
-        final path = _getPath(handlerAnnotation);
-        handlers.add(HandlerInfo(method.name, httpMethod, path!,
+        final definedPath = _getPath(handlerAnnotation);
+
+        if (definedPath != null) {
+          _validatePath(method, definedPath);
+        }
+
+        final path = definedPath ?? _generatePathWithParameters(method);
+
+        handlers.add(HandlerInfo(method.name, httpMethod, path,
             method.parameters, method.returnType));
       }
     }
@@ -132,17 +139,90 @@ class XServerGenerator extends GeneratorForAnnotation<XServer> {
       );
     }
 
+    // Validate parameters
     for (var param in method.parameters) {
       if (!_queryChecker.hasAnnotationOf(param) &&
           !_bodyChecker.hasAnnotationOf(param) &&
           !_headerChecker.hasAnnotationOf(param) &&
-          !_pathChecker.hasAnnotationOf(param)) {
+          !_pathChecker.hasAnnotationOf(param) &&
+          !_requestChecker.isExactlyType(param.type)) {
         throw InvalidGenerationSourceError(
-          'All parameters must have one of @Query, @Body, @Header, or @Path annotations.',
+          'Parameter ${param.name} must have one of @Query, @Body, @Header, or @Path annotations, '
+          'or be of type Request.',
           element: param,
         );
       }
     }
+
+    // Validate that there's only one @Body parameter
+    final bodyParams = method.parameters
+        .where((p) => _bodyChecker.hasAnnotationOf(p))
+        .toList();
+    if (bodyParams.length > 1) {
+      throw InvalidGenerationSourceError(
+        'Only one @Body parameter is allowed per handler method.',
+        element: method,
+      );
+    }
+  }
+
+  void _validatePath(MethodElement method, String definedPath) {
+    final pathParams = method.parameters
+        .where((p) => _pathChecker.hasAnnotationOf(p))
+        .toList();
+
+    // First pass: Check required parameters (assume no optional segments)
+    final requiredPath = definedPath.replaceAll(RegExp(r'\[.*?\]'), '');
+    for (var param in pathParams.where((p) => p.isRequired)) {
+      if (!_isParameterInPath(requiredPath, param)) {
+        throw InvalidGenerationSourceError(
+          'Required path parameter "${param.name}" is not included in the non-optional part of the path "$definedPath".',
+          element: method,
+        );
+      }
+    }
+
+    // Second pass: Check all parameters (assume all optional segments present)
+    final fullPath = definedPath.replaceAll(RegExp(r'[\[\]]'), '');
+    for (var param in pathParams) {
+      if (!_isParameterInPath(fullPath, param)) {
+        throw InvalidGenerationSourceError(
+          'Path parameter "${param.name}" is not included in the path "$definedPath".',
+          element: method,
+        );
+      }
+    }
+  }
+
+  bool _isParameterInPath(String path, ParameterElement param) {
+    final paramName = param.name;
+    final paramAnnotation = _pathChecker.firstAnnotationOf(param);
+    final customName = paramAnnotation?.getField('name')?.toStringValue();
+
+    final paramPattern = customName ?? paramName;
+    return path.contains('<$paramPattern>') || path.contains('<$paramPattern|');
+  }
+
+  String _generatePathWithParameters(MethodElement method) {
+    var path = '/${method.name}';
+    final pathParams = method.parameters
+        .where((p) => _pathChecker.hasAnnotationOf(p))
+        .toList();
+
+    for (var param in pathParams) {
+      final paramName = param.name;
+      final paramAnnotation = _pathChecker.firstAnnotationOf(param);
+      final customName = paramAnnotation?.getField('name')?.toStringValue();
+
+      final paramPattern = customName ?? paramName;
+      path += '/<$paramPattern>';
+    }
+
+    return path;
+  }
+
+  String? _getPath(DartObject? annotation) {
+    return annotation?.getField('path')?.toStringValue();
   }
 
   bool _isSerializable(DartType type) {
@@ -464,11 +544,6 @@ class XServerGenerator extends GeneratorForAnnotation<XServer> {
     if (_getChecker.isExactlyType(annotation.type!)) return 'GET';
     if (_postChecker.isExactlyType(annotation.type!)) return 'POST';
     throw InvalidGenerationSourceError('Unknown HTTP method');
-  }
-
-  String? _getPath(DartObject annotation) {
-    final pathField = annotation.getField('path');
-    return pathField?.toStringValue();
   }
 }
 

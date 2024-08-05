@@ -38,20 +38,20 @@ typedef HandlerFunction<T> = FutureOr<Response> Function(Request request);
 
 @Target({TargetKind.method})
 class All {
-  final String path;
-  const All(this.path);
+  final String? path;
+  const All([this.path]);
 }
 
 @Target({TargetKind.method})
 class Get {
-  final String path;
-  const Get(this.path);
+  final String? path;
+  const Get([this.path]);
 }
 
 @Target({TargetKind.method})
 class Post {
-  final String path;
-  const Post(this.path);
+  final String? path;
+  const Post([this.path]);
 }
 
 @Target({TargetKind.parameter})
@@ -77,6 +77,9 @@ class Path {
   const Path([this.name]);
 }
 
+const all = All();
+const get = Get();
+const post = Post();
 const query = Query();
 const header = Header();
 const body = Body();

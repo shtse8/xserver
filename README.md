@@ -18,7 +18,7 @@ Add xserver as a dependency in your `pubspec.yaml`:
 
 ```yaml
 dependencies:
-  xserver: ^0.1.3
+  xserver: ^0.2.0
 ```
 
 Run `pub get` to install the package.
@@ -46,19 +46,19 @@ Define your handlers within the `AppServer` class. Use annotations to specify th
 ```dart
 @xServer
 class AppServer extends _$AppServer {
-  @All('/test')
+  @get
   Future<String> test({
-    @Query() required String query,
-    @Body() required Data body,
-    @Query() required int query2,
-    @Header() required String header,
-    @Header() required int header2,
+    @query required String query,
+    @body required Data body,
+    @query required int query2,
+    @header required String header,
+    @header required int header2,
   }) async {
     return 'test';
   }
 
   @Get('/user/<id>')
-  Future<String> user(@Path() String id) async {
+  Future<String> user(@path String id) async {
     return 'User: $id';
   }
 
