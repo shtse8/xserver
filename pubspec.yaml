@@ -9,7 +9,7 @@ environment:
 
 dependencies:
   analyzer: ^6.4.1
-  build: ^2.4.1
+  build: ^4.0.0
   collection: ^1.18.0
   dart_casing: ^3.0.1
   http: ^1.2.2
