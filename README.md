@@ -1,7 +1,7 @@
 # xserver
 
 <p align="center">
-  <img src="https://mark.sylphx.com/api/v1/mark/hero?type=neon&theme=tokyonight&text=xserver&desc=xserver+is+a+Dart-based+web+server+framework+that+leverages+source+generation+for+automatic%E2%80%A6&height=200&animation=rise" alt="xserver — Sylphx Mark banner" width="100%" />
+  <img src="https://mark.sylphx.com/api/v1/mark/hero.svg?type=waving&theme=dark&text=xserver&desc=A%20Dart%20web%20server%20with%20generated%20routes" alt="xserver" width="100%" />
 </p>
 
 xserver is a Dart-based web server framework that leverages source generation for automatic handler registration, making it easier to manage and expand your web server's endpoints.
